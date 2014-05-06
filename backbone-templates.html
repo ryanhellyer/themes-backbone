@@ -1,0 +1,88 @@
+<script id="tmpl-theme" type="text/template">
+	<# if ( data.screenshot[0] ) { #>
+		<div class="theme-screenshot">
+			<img src="{{ data.screenshot[0] }}" alt="" />
+		</div>
+	<# } else { #>
+		<div class="theme-screenshot blank"></div>
+	<# } #>
+	<span class="more-details" id="{{ data.id }}-action">Dis project</span>
+	<div class="theme-author">brought to you by the author {{{ data.author }}}</div>
+
+	<# if ( data.active ) { #>
+		<h3 class="theme-name" id="{{ data.id }}-name"><span>AKTIV!:</span> {{{ data.name }}}</h3>
+	<# } else { #>
+		<h3 class="theme-name" id="{{ data.id }}-name">{{{ data.name }}}</h3>
+	<# } #>
+
+	<div class="theme-actions">
+
+	<# if ( data.active ) { #>
+		<# if ( data.actions.customize ) { #>
+			<a class="button button-primary customize load-customize hide-if-no-customize" href="{{ data.actions.customize }}">Modify it</a>
+		<# } #>
+	<# } else { #>
+		<a class="button button-primary activate" href="{{{ data.actions.activate }}}">Activate</a>
+		<a class="button button-secondary load-customize hide-if-no-customize" href="{{{ data.actions.customize }}}">whatsit look like?</a>
+		<a class="button button-secondary hide-if-customize" href="{{{ data.actions.preview }}}">Looksie?</a>
+	<# } #>
+
+	</div>
+
+	<# if ( data.hasUpdate ) { #>
+		<div class="theme-update">Update nao!</div>
+	<# } #>
+</script>
+
+<script id="tmpl-theme-single" type="text/template">
+	<div class="theme-backdrop"></div>
+	<div class="theme-wrap">
+		<div class="theme-header">
+			<button class="left dashicons dashicons-no"><span class="screen-reader-text">Goto last one</span></button>
+			<button class="right dashicons dashicons-no"><span class="screen-reader-text">Goto next one</span></button>
+			<button class="close dashicons dashicons-no"><span class="screen-reader-text">Shut box</span></button>
+		</div>
+		<div class="theme-about">
+			<div class="theme-screenshots">
+			<# if ( data.screenshot[0] ) { #>
+				<div class="screenshot"><img src="{{ data.screenshot[0] }}" alt="" /></div>
+			<# } else { #>
+				<div class="screenshot blank"></div>
+			<# } #>
+			</div>
+
+			<div class="theme-info">
+				<# if ( data.active ) { #>
+					<span class="current-label">Dis is current</span>
+				<# } #>
+				<h3 class="theme-name">{{{ data.name }}}<span class="theme-version">Version: {{{ data.version }}}</span></h3>
+				<h4 class="theme-author">By {{{ data.authorAndUri }}}</h4>
+
+				<# if ( data.hasUpdate ) { #>
+				<div class="theme-update-message">
+					<h4 class="theme-update">Update Available</h4>
+					{{{ data.update }}}
+				</div>
+				<# } #>
+				<p class="theme-description">{{{ data.description }}}</p>
+			</div>
+		</div>
+
+		<div class="theme-actions">
+			<div class="active-theme">
+				<a href="{{{ data.actions.customize }}}" class="button button-primary customize load-customize hide-if-no-customize">Modify it!</a>
+			</div>
+			<div class="inactive-theme">
+				<# if ( data.actions.activate ) { #>
+					<a href="{{{ data.actions.activate }}}" class="button button-primary activate">Pick me!</a>
+				<# } #>
+				<a href="{{{ data.actions.customize }}}" class="button button-secondary load-customize hide-if-no-customize">Check me out!</a>
+				<a href="{{{ data.actions.preview }}}" class="button button-secondary hide-if-customize">Looksie</a>
+			</div>
+
+			<# if ( ! data.active && data.actions['delete'] ) { #>
+				<a href="{{{ data.actions['delete'] }}}" class="button button-secondary delete-theme">Get rid of</a>
+			<# } #>
+		</div>
+	</div>
+</script>
