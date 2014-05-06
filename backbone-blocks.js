@@ -1158,15 +1158,15 @@ themes.view.Search = wp.Backbone.View.extend({
 themes.Router = Backbone.Router.extend({
 
 	routes: {
-		'admin.php?page=theme-page.php&theme=:slug': 'theme',
-		'admin.php?page=theme-page.php&search=:query': 'search',
-		'admin.php?page=theme-page.php&s=:query': 'search',
-		'admin.php?page=theme-page.php': 'themes',
+		'admin.php?page=themes-backbone.php&theme=:slug': 'theme',
+		'admin.php?page=themes-backbone.php&search=:query': 'search',
+		'admin.php?page=themes-backbone.php&s=:query': 'search',
+		'admin.php?page=themes-backbone.php': 'themes',
 		'': 'themes'
 	},
 
 	baseUrl: function( url ) {
-		return 'admin.php?page=theme-page.php' + url;
+		return 'admin.php?page=themes-backbone.php' + url;
 	},
 
 	search: function( query ) {

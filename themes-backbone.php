@@ -28,133 +28,163 @@ License: GPLv2
 /*
  * Set plugin folder URL
  */
-define( 'THEMES_BACKBONE_URL', plugin_dir_url( __FILE__ ) );
+define( 'THEMES_BACKBONE_URL',  );
+define( 'THEMES_BACKBONE_ADMIN_URL', admin_url . 'admin.php?page=themes-backbone/themes-backbone.php' );
 
 
+/**
+ * End to End
+ * 
+ * @copyright Copyright (c), Ryan Hellyer
+ * @author Ryan Hellyer <ryanhellyer@gmail.com>
+ * @since 1.0
+ */
+class Theme_Backbone {
 
-function bla_init() {
-	if ( ! isset( $_GET['page'] ) ) {
-		return;
+	const plugin_dir_url( __FILE__ );
+
+	/**
+	 * Class constructor
+	 */
+	public function __construct() {
+		add_action( 'admin_init', array( $this, 'init' ) );
+		add_action( 'admin_menu', array( $this, 'add_admin_page' ) );
 	}
-	if ( 'themes-backbone/themes-backbone.php' != $_GET['page'] ) {
-		return;
+
+	/*
+	 * Set options for the blocks
+	 *
+	 * @return array  Settings for each of block
+	 */
+	public function get_blocks() {
+		$blocks = array(
+			0 => array(
+				'id' => 'plugin-1',
+				'name' => 'Plugin 1',
+				'screenshot' => array(
+					0 => 'http://uploads.ryanhellyer.net/ryan/2014/03/frogs-legs-680x382.jpg',
+				),
+				'description' => 'Some random plugin we iz gonna add!',
+				'author' => 'Ryan the great',
+				'authorAndUri' => '<a href="http://geek.ryanhellyer.net/" title="Ryan the great">Ryan the great</a>',
+				'version' => '1.0',
+				'tags' => 'Green, Red, White',
+				'Parent' => '',
+				'Active' => '',
+				'hasUpdate' => '',
+				'update' => '',
+				'actions' => array(
+					'activate' => THEMES_BACKBONE_ADMIN_URL . '&action=activate&_wpnonce=' . $nonce,
+					'delete' => THEMES_BACKBONE_ADMIN_URL . '&action=delete&_wpnonce='. $nonce,
+				),
+
+			),
+			1 => array(
+				'id' => 'plugin-2',
+				'name' => 'Plugin 2',
+				'screenshot' => array(
+					0 => 'http://uploads.ryanhellyer.net/ryan/2007/07/ryansarahjane2.jpg',
+				),
+				'description' => 'Plugin by a muppet',
+				'author' => 'Remkus the muppet',
+				'authorAndUri' => '<a href="http://remkusdevries.com/" title="A muppet">Remkus the muppet</a>',
+				'version' => '1.2',
+				'tags' => 'Black, Red, Pink',
+				'Parent' => '',
+				'Active' => '',
+				'hasUpdate' => '',
+				'update' => '',
+				'actions' => array(
+					'activate' => THEMES_BACKBONE_ADMIN_URL . '&action=activate&_wpnonce=' . $nonce,
+					'delete' => THEMES_BACKBONE_ADMIN_URL . '&action=delete&_wpnonce='. $nonce,
+				),
+
+			),
+		);
+
+		return $blocks;
 	}
 
+	/*
+	 * Initialise
+	 */
+	public function init() {
 
+		// Bail out now, if not on correct admin page
+		if ( ! isset( $_GET['page'] ) ) {
+			return;
+		}
+		if ( 'themes-backbone/themes-backbone.php' != $_GET['page'] ) {
+			return;
+		}
 
-	// Need to register script, for use with wp_localize_script
- 	wp_register_script(
-		'ryans-theme',
-		THEMES_BACKBONE_URL. 'ryans-theme.js',
-		array( 'wp-backbone' ),
-		'1.0',
-		true
-	);
+		// Need to register script, for use with wp_localize_script
+	 	wp_register_script(
+			'ryans-theme',
+			THEMES_BACKBONE_URL. 'backbone-blocks.js',
+			array( 'wp-backbone' ),
+			'1.0',
+			true
+		);
 
-	$themes = wp_prepare_themes_for_js();
-
-define( 'RYANS_PAGE_URL', admin_url . 'admin.php?page=themes-backbone/themes-backbone.php' );
 $nonce = 'sdffd';
-$ryans_themes = array(
-	0 => array(
-		'id' => 'plugin-1',
-		'name' => 'Plugin 1',
-		'screenshot' => array(
-			0 => 'http://uploads.ryanhellyer.net/ryan/2014/03/frogs-legs-680x382.jpg',
-		),
-		'description' => 'Some random plugin we iz gonna add!',
-		'author' => 'Ryan the great',
-		'authorAndUri' => '<a href="http://geek.ryanhellyer.net/" title="Ryan the great">Ryan the great</a>',
-		'version' => '1.0',
-		'tags' => 'Green, Red, White',
-		'Parent' => '',
-		'Active' => '',
-		'hasUpdate' => '',
-		'update' => '',
-		'actions' => array(
-			'activate' => RYANS_PAGE_URL . '&action=activate&_wpnonce=' . $nonce,
-			'delete' => RYANS_PAGE_URL . '&action=delete&_wpnonce='. $nonce,
-		),
 
-	),
-	1 => array(
-		'id' => 'plugin-2',
-		'name' => 'Plugin 2',
-		'screenshot' => array(
-			0 => 'http://uploads.ryanhellyer.net/ryan/2007/07/ryansarahjane2.jpg',
-		),
-		'description' => 'Plugin by a muppet',
-		'author' => 'Remkus the muppet',
-		'authorAndUri' => '<a href="http://remkusdevries.com/" title="A muppet">Remkus the muppet</a>',
-		'version' => '1.2',
-		'tags' => 'Black, Red, Pink',
-		'Parent' => '',
-		'Active' => '',
-		'hasUpdate' => '',
-		'update' => '',
-		'actions' => array(
-			'activate' => RYANS_PAGE_URL . '&action=activate&_wpnonce=' . $nonce,
-			'delete' => RYANS_PAGE_URL . '&action=delete&_wpnonce='. $nonce,
-		),
+		wp_localize_script( 'ryans-theme', '_wpThemeSettings', array(
+			'themes'   => $this->get_blocks(),
+			'settings' => array(
+				'canInstall'    => ( ! is_multisite() && current_user_can( 'install_themes' ) ),
+				'installURI'    => ( ! is_multisite() && current_user_can( 'install_themes' ) ) ? admin_url( 'theme-install.php' ) : null,
+				'confirmDelete' => __( "Are you sure you want to delete this thing?\n\nClick 'Cancel' to go back, 'OK' to confirm the delete." ),
+				'adminUrl'      => parse_url( admin_url(), PHP_URL_PATH ),
+			),
+		 	'l10n' => array(
+		 		'search'  => __( 'Search Installed Things' ),
+		 		'searchPlaceholder' => __( 'Search installed things...' ), // placeholder (no ellipsis)
+		  	),
+		) );
 
-	),
-);
-/*
-echo '<textarea style="font-family:monospace;position:absolute;top:100px;left:0;z-index:99999;width:600px;height:700px;">';
-print_r( $themes );
-echo '</textarea>';
-echo '<textarea style="font-family:monospace;position:absolute;top:100px;left:600px;z-index:99999;width:600px;height:700px;">';
-print_r( $ryans_themes );
-echo '</textarea>';
-*/
-$themes = $ryans_themes;
+		add_thickbox();
 
-	wp_reset_vars( array( 'theme', 'search' ) );
+		wp_enqueue_script( 'wp-util' ); // Originally included with 'theme'
+		wp_enqueue_script( 'wp-backbone' ); // Originally included with 'theme'
 
-	wp_localize_script( 'ryans-theme', '_wpThemeSettings', array(
-		'themes'   => $themes,
-		'settings' => array(
-			'canInstall'    => ( ! is_multisite() && current_user_can( 'install_themes' ) ),
-			'installURI'    => ( ! is_multisite() && current_user_can( 'install_themes' ) ) ? admin_url( 'theme-install.php' ) : null,
-			'confirmDelete' => __( "Are you sure you want to delete this theme?\n\nClick 'Cancel' to go back, 'OK' to confirm the delete." ),
-			'adminUrl'      => parse_url( admin_url(), PHP_URL_PATH ),
-		),
-	 	'l10n' => array(
-	 		'addNew' => __( 'Add New Theme' ),
-	 		'search'  => __( 'Search Installed Themes' ),
-	 		'searchPlaceholder' => __( 'Search installed themes...' ), // placeholder (no ellipsis)
-	  	),
-	) );
+		wp_enqueue_script( 'ryans-theme' );
 
-	add_thickbox();
+		require_once( ABSPATH . 'wp-admin/admin-header.php' );
+	}
 
-	wp_enqueue_script( 'wp-util' ); // Originally included with 'theme'
-	wp_enqueue_script( 'wp-backbone' ); // Originally included with 'theme'
+	/*
+	 * Add administration page
+	 */
+	function add_admin_page() {
+		add_menu_page(
+			__( 'Themes Backbone test', 'themes-backbone' ),
+			__( 'Test', 'themes-backbone' ),
+			'administrator',
+			__FILE__,
+			array( $this, 'page_content' ),
+			''
+		);
+	}
 
-	wp_enqueue_script( 'ryans-theme' );
+	/*
+	 * Add admin page contents
+	 */
+	public function page_content() {
 
-	require_once( ABSPATH . 'wp-admin/admin-header.php' );
-}
-add_action( 'admin_init', 'bla_init' );
+		echo '
+		<div class="wrap">
+		<h2>Themes		<span class="theme-count">3</span>
+		</h2>
+			<h2>' . __( 'Stuff', 'themes-backbone' ) . '</h2>
+			<div class="theme-browser"></div>
+			<div class="theme-overlay"></div>
+		';
 
+		require( 'backbone-templates.html' );
+		echo '</div>';
 
-
-function baw_create_menu() {
-	add_menu_page('Test page', 'Test', 'administrator', __FILE__, 'test_page','');
-}
-add_action( 'admin_menu', 'baw_create_menu' );
-
-function test_page() {
-
-	echo '
-	<div class="wrap">
-		<h2>Your Plugin Name</h2>
-		<div class="theme-browser"></div>
-		<div class="theme-overlay"></div>
-
-	';
-
-	require( 'backbone-templates.html' );
-	echo '</div>';
+	}
 
 }
+new Theme_Backbone;
